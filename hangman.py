@@ -31,7 +31,6 @@ def show_answer(answer, selected_word, missing_letter_index):
         print("Wrong! Do better next time.")
 
 
-# TODO: Step 2
 def ask_file_name():
     path = input("Words file? [leave empty to use short_words.txt] :")
 
