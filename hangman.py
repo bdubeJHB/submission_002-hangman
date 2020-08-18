@@ -2,8 +2,8 @@ import random
 
 
 def read_file(file_name):
-    file = open(file_name,'r')
-    return file.readlines()
+    with open(file_name,'r') as file:
+        return file.readlines()
 
 
 def select_random_word(words):
@@ -24,18 +24,20 @@ def get_user_input():
 
 
 def show_answer(answer, selected_word, missing_letter_index):
-    """
-    TODO Step 1 - Show better results messages
-    """
-    pass
+    print("The word was: " + selected_word)
+    if selected_word[missing_letter_index] == answer:
+        print("Well done! You are awesome!")
+    else:
+        print("Wrong! Do better next time.")
 
 
 # TODO: Step 2
 def ask_file_name():
-    """
-    TODO Step 2 - Update to prompt user for filename to use for words
-    """
-    return 'TODO.txt'
+    path = input("Words file? [leave empty to use short_words.txt] :")
+
+    if path:
+        return path
+    return "short_words.txt"
 
 
 def run_game(file_name):
