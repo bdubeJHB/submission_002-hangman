@@ -25,17 +25,33 @@ def select_random_word(words):
 
 # TODO: Step 1 - update to randomly fill in one character of the word only
 def random_fill_word(word):
-    TODO
+    given = list(word)
+    #print("Word is: " + word)
+    count = 0
+    index = random.randint(0, len(given) - 1)
+    #guesses = 5
+
+    while count < len(given):
+        if count == index:
+            continue
+        given[count] = '_'
+    return ''.join(given)
+
 
 
 # TODO: Step 1 - update to check if character is one of the missing characters
 def is_missing_char(original_word, answer_word, char):
+    if char in original_word:
+        index = 0
+        while index < len(original_word):
+            if original_word[index] == char and answer_word[index] == '_'
+                return True
     return False
 
 
 # TODO: Step 1 - fill in missing char in word and return new more complete word
 def fill_in_char(original_word, answer_word, char):
-    TODO
+    print('z')
 
 
 def do_correct_answer(original_word, answer, guess):
