@@ -23,35 +23,39 @@ def select_random_word(words):
     return word
 
 
-# TODO: Step 1 - update to randomly fill in one character of the word only
 def random_fill_word(word):
     given = list(word)
-    #print("Word is: " + word)
     count = 0
     index = random.randint(0, len(given) - 1)
-    #guesses = 5
 
     while count < len(given):
-        if count == index:
-            continue
-        given[count] = '_'
+        if count != index:
+            given[count] = '_'
+        count += 1
     return ''.join(given)
 
 
 
-# TODO: Step 1 - update to check if character is one of the missing characters
 def is_missing_char(original_word, answer_word, char):
     if char in original_word:
         index = 0
         while index < len(original_word):
-            if original_word[index] == char and answer_word[index] == '_'
+            if original_word[index] == char and answer_word[index] == '_':
                 return True
+            index += 1
     return False
 
 
-# TODO: Step 1 - fill in missing char in word and return new more complete word
 def fill_in_char(original_word, answer_word, char):
-    print('z')
+    word = list(answer_word)
+    index = 0
+
+    while index < len(original_word):
+        if original_word[index] == char and answer_word[index] == '_':
+            word[index] = char
+        index += 1
+
+    return ''.join(word)
 
 
 def do_correct_answer(original_word, answer, guess):
@@ -74,12 +78,15 @@ def draw_figure(number_guesses):
 # TODO: Step 3 - update loop to exit game if user types `exit` or `quit`
 # TODO: Step 4 - keep track of number of remaining guesses
 def run_game_loop(word, answer):
-    print("Guess the word: "+answer)
-    guess = get_user_input()
-    if is_missing_char(word, answer, guess):
-        answer = do_correct_answer(word, answer, guess)
-    else:
-        do_wrong_answer(answer, 0)
+    while 1:
+        if '_' not in answer:
+            break
+        print("Guess the word: " + answer)
+        guess = get_user_input()
+        if is_missing_char(word, answer, guess):
+            answer = do_correct_answer(word, answer, guess)
+        else:
+            do_wrong_answer(answer, 0)
 
 
 # TODO: Step 6 - update to get words_file to use from commandline argument
