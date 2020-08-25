@@ -1,4 +1,5 @@
 import random
+import argparse
 
 
 def read_file(file_name):
@@ -7,11 +8,21 @@ def read_file(file_name):
 
 
 def get_user_input():
-    guess = input('Guess the missing letter: ')
+    try:
+        guess = input('Guess the missing letter: ')
+        if guess:
+            guess = guess.strip().lower()
+    except EOFError:
+        guess = 'no'
+        print("\nInput terminated")
+
+    return guess
 
 
 def ask_file_name():
+    
     file_name = input("Words file? [leave empty to use short_words.txt] : ").strip()
+
     if not file_name:
         return 'short_words.txt'
     return file_name
@@ -20,6 +31,7 @@ def ask_file_name():
 def select_random_word(words):
     random_index = random.randint(0, len(words)-1)
     word = words[random_index].strip()
+
     return word
 
 
@@ -38,6 +50,7 @@ def random_fill_word(word):
 
 def is_missing_char(original_word, answer_word, char):
     ori = list(original_word)
+
     if char in ori:
         index = 0
         while index < len(original_word):
@@ -61,6 +74,7 @@ def fill_in_char(original_word, answer_word, char):
 
 def do_correct_answer(original_word, answer, guess):
     answer = fill_in_char(original_word, answer, guess)
+
     print(answer)
     return answer
 
@@ -76,16 +90,16 @@ def do_wrong_answer(answer, number_guesses):
 
 # TODO: Step 5: draw hangman stick figure, based on number of guesses remaining
 def draw_figure(number_guesses):
-    if number_guesses == 5:
-        print("/----\n|\n|\n|\n|")
-    elif number_guesses == 4:
-        print("/----\n|   0\n|\n|\n|\n")
+    #if number_guesses == 5:
+        #print("/----\n|\n|\n|\n|\n\n_______")
+    if number_guesses >= 4:
+        print("/----\n|\n|\n|\n|\n_______")
     elif number_guesses == 3:
-        print("/----\n|   0\n|  /|\\\n|\n|")
+        print("/----\n|   0\n|   |\n|   |\n|\n_______")
     elif number_guesses == 2:
-        print("/----\n|   0\n|  /|\\\n|   |\n|")
+        print("/----\n|   0\n|  /|\\\n|   |\n|\n_______")
     else:
-        print("/----\n|   0\n|  /|\\\n|   |\n|  / \\")
+        print("/----\n|   0\n|  /|\\\n|   |\n|  / \\\n_______")
 
 
 # TODO: Step 4 - keep track of number of remaining guesses
@@ -93,7 +107,7 @@ def run_game_loop(word, answer):
     lives = 5
 
     print("Guess the word: " + answer)
-    while 1:
+    while lives:
         if '_' not in answer:
             break
         guess = get_user_input()
@@ -107,7 +121,7 @@ def run_game_loop(word, answer):
             if lives:
                 do_wrong_answer(answer, lives)
             else:
-                print("Sorry, you are out of guesses. The word was " + word)
+                print("Sorry, you are out of guesses. The word was: " + word)
 
 
 # TODO: Step 6 - update to get words_file to use from commandline argument
