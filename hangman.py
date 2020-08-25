@@ -4,6 +4,7 @@ import sys
 
 def read_file(file_name):
     file = open(file_name,'r')
+
     return file.readlines()
 
 
@@ -28,6 +29,7 @@ def ask_file_name():
         file_name = file_name = input("Words file? [leave empty to use short_words.txt] : ").strip()
         if not file_name:
             file_name = "short_words.txt"
+
     return file_name
 
 
@@ -47,6 +49,7 @@ def random_fill_word(word):
         if count != index:
             given[count] = '_'
         count += 1
+
     return ''.join(given)
 
 
@@ -60,6 +63,7 @@ def is_missing_char(original_word, answer_word, char):
             if original_word[index] == char and answer_word[index] == '_':
                 return True
             index += 1
+
     return False
 
 
@@ -79,10 +83,10 @@ def do_correct_answer(original_word, answer, guess):
     answer = fill_in_char(original_word, answer, guess)
 
     print(answer)
+
     return answer
 
 
-# TODO: Step 4: update to use number of remaining guesses
 def do_wrong_answer(answer, number_guesses):
     if number_guesses:
         print('Wrong! Number of guesses left: ' + str(number_guesses))
@@ -91,10 +95,7 @@ def do_wrong_answer(answer, number_guesses):
         print("Sorry, you are out of guesses. The word was " + answer)
 
 
-# TODO: Step 5: draw hangman stick figure, based on number of guesses remaining
 def draw_figure(number_guesses):
-    #if number_guesses == 5:
-        #print("/----\n|\n|\n|\n|\n\n_______")
     if number_guesses >= 4:
         print("/----\n|\n|\n|\n|\n_______")
     elif number_guesses == 3:
@@ -105,7 +106,6 @@ def draw_figure(number_guesses):
         print("/----\n|   0\n|  /|\\\n|   |\n|  / \\\n_______")
 
 
-# TODO: Step 4 - keep track of number of remaining guesses
 def run_game_loop(word, answer):
     lives = 5
 
@@ -127,7 +127,6 @@ def run_game_loop(word, answer):
                 print("Sorry, you are out of guesses. The word was: " + word)
 
 
-# TODO: Step 6 - update to get words_file to use from commandline argument
 if __name__ == "__main__":
     words_file = ask_file_name()
     words = read_file(words_file)
