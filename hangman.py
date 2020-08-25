@@ -1,5 +1,5 @@
 import random
-import argparse
+import sys
 
 
 def read_file(file_name):
@@ -20,11 +20,14 @@ def get_user_input():
 
 
 def ask_file_name():
-    
-    file_name = input("Words file? [leave empty to use short_words.txt] : ").strip()
+    file_name = ''
 
-    if not file_name:
-        return 'short_words.txt'
+    if (len(sys.argv) - 1):
+        file_name = sys.argv[1]
+    else:
+        file_name = file_name = input("Words file? [leave empty to use short_words.txt] : ").strip()
+        if not file_name:
+            file_name = "short_words.txt"
     return file_name
 
 
@@ -38,7 +41,7 @@ def select_random_word(words):
 def random_fill_word(word):
     given = list(word)
     count = 0
-    index = random.randint(0, len(given) - 1)
+    index = random.randint(0, len(given) - 2)
 
     while count < len(given):
         if count != index:
