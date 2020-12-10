@@ -1,137 +1,56 @@
 import random
-import sys
 
 
 def read_file(file_name):
-    file = open(file_name,'r')
-
-    return file.readlines()
-
-
-def get_user_input():
-    try:
-        guess = input('Guess the missing letter: ')
-        if guess:
-            guess = guess.strip().lower()
-    except EOFError:
-        guess = 'no'
-        print("\nInput terminated")
-
-    return guess
-
-
-def ask_file_name():
-    file_name = ''
-
-    if (len(sys.argv) - 1):
-        file_name = sys.argv[1]
-    else:
-        file_name = file_name = input("Words file? [leave empty to use short_words.txt] : ").strip()
-        if not file_name:
-            file_name = "short_words.txt"
-
-    return file_name
+    with open(file_name,'r') as file:
+        return file.readlines()
 
 
 def select_random_word(words):
     random_index = random.randint(0, len(words)-1)
-    word = words[random_index].strip()
-
+    word = words[random_index]
     return word
 
 
-def random_fill_word(word):
-    given = list(word)
-    count = 0
-    index = random.randint(0, len(given) - 2)
-
-    while count < len(given):
-        if count != index:
-            given[count] = '_'
-        count += 1
-
-    return ''.join(given)
+def select_random_letter_from(word):
+    random_index = random.randint(0, len(word) - 1)
+    letter = word[random_index]
+    print('Guess the word: ' + word[:random_index] + "_" + word[random_index+1:])
+    return letter, random_index
 
 
-
-def is_missing_char(original_word, answer_word, char):
-    ori = list(original_word)
-
-    if char in ori:
-        index = 0
-        while index < len(original_word):
-            if original_word[index] == char and answer_word[index] == '_':
-                return True
-            index += 1
-
-    return False
+def get_user_input():
+    return input('Guess the missing letter: ')
 
 
-def fill_in_char(original_word, answer_word, char):
-    word = list(answer_word)
-    index = 0
-
-    while index < len(original_word):
-        if original_word[index] == char and answer_word[index] == '_':
-            word[index] = char
-        index += 1
-
-    return ''.join(word)
-
-
-def do_correct_answer(original_word, answer, guess):
-    answer = fill_in_char(original_word, answer, guess)
-
-    print(answer)
-
-    return answer
-
-
-def do_wrong_answer(answer, number_guesses):
-    if number_guesses:
-        print('Wrong! Number of guesses left: ' + str(number_guesses))
-        draw_figure(number_guesses)
+def show_answer(answer, selected_word, missing_letter_index):
+    print("The word was: " + selected_word)
+    if selected_word[missing_letter_index] == answer:
+        print("Well done! You are awesome!")
     else:
-        print("Sorry, you are out of guesses. The word was " + answer)
+        print("Wrong! Do better next time.")
 
 
-def draw_figure(number_guesses):
-    if number_guesses >= 4:
-        print("/----\n|\n|\n|\n|\n_______")
-    elif number_guesses == 3:
-        print("/----\n|   0\n|   |\n|   |\n|\n_______")
-    elif number_guesses == 2:
-        print("/----\n|   0\n|  /|\\\n|   |\n|\n_______")
-    else:
-        print("/----\n|   0\n|  /|\\\n|   |\n|  / \\\n_______")
+def ask_file_name():
+    path = input("Words file? [leave empty to use short_words.txt] :")
+
+    if path:
+        return path
+    return "short_words.txt"
 
 
-def run_game_loop(word, answer):
-    lives = 5
-
-    print("Guess the word: " + answer)
-    while lives:
-        if '_' not in answer:
-            break
-        guess = get_user_input()
-        if is_missing_char(word, answer, guess):
-            answer = do_correct_answer(word, answer, guess)
-        elif guess == "quit" or guess == "exit":
-            print("Bye!")
-            break
-        else:
-            lives -= 1
-            if lives:
-                do_wrong_answer(answer, lives)
-            else:
-                print("Sorry, you are out of guesses. The word was: " + word)
+def run_game(file_name):
+    """
+    You can leave this code as is, and only implemented above where the code comments prompt you.
+    """
+    words = read_file(file_name)
+    word = select_random_word(words)
+    missing_letter, letter_index = select_random_letter_from(word)
+    answer = get_user_input()
+    show_answer(answer, word, letter_index)
 
 
 if __name__ == "__main__":
     words_file = ask_file_name()
-    words = read_file(words_file)
-    selected_word = select_random_word(words)
-    current_answer = random_fill_word(selected_word)
-
-    run_game_loop(selected_word, current_answer)
+    run_game(words_file)
 

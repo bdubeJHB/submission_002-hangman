@@ -5,75 +5,57 @@ import hangman
 
 
 class MyTestCase(unittest.TestCase):
+    def test_previous(self):
+        words = hangman.read_file('tests/test_list.txt')
+        self.assertEqual(1, len(words))
+        self.assertEqual('abc', words[0])
+
+        hangman.random.randint = lambda a,b: 0
+
+        with captured_io(StringIO('a\n')) as (out, err):
+            hangman.select_random_word(['abc'])
+            hangman.select_random_letter_from('abc')
+
+        output = out.getvalue().strip()
+        self.assertEqual("Guess the word: _bc", output)
 
     def test_step1(self):
-        # test random_fill_word
-        for i in range(0,1000):
-            filled_word = hangman.random_fill_word("abcde")
-            self.assertEqual(5, len(filled_word.split('_')))
+        #Test wrong answer
+        with captured_io(StringIO('a\n')) as (out, err):
+            hangman.show_answer("z","rocket",1)
 
-        # test is_missing_char
-        self.assertTrue(hangman.is_missing_char('abc', 'a__', 'b'))
-        self.assertFalse(hangman.is_missing_char('abc', 'a__', 'a'))
-        self.assertFalse(hangman.is_missing_char('abc', 'a__', 'f'))
+        output = out.getvalue().strip()
+        self.assertEqual("The word was: rocket\nWrong! Do better next time.", output)
 
-        # test fill_in_char
-        self.assertEqual('ab_', hangman.fill_in_char('abc', 'a__', 'b'))
-        self.assertEqual('a__', hangman.fill_in_char('abc', 'a__', 'a'))
-        self.assertEqual('a__', hangman.fill_in_char('abc', 'a__', 'f'))
+        # Test correct answer
+        with captured_io(StringIO('a\n')) as (out, err):
+            hangman.show_answer("o","rocket",1)
+
+        output = out.getvalue().strip()
+        self.assertEqual("The word was: rocket\nWell done! You are awesome!", output)
 
     def test_step2(self):
-        with captured_io(StringIO('a\nb\n')) as (out, err):
-            hangman.run_game_loop('abc',"__c")
+        # Test with blank
+        with captured_io(StringIO('\n')) as (out, err):
+            filename = hangman.ask_file_name()
+
+        self.assertEqual('short_words.txt', filename)
+        output = out.getvalue().strip()
+        self.assertEqual("Words file? [leave empty to use short_words.txt] :", output)
+
+        # TEst with actual filename
+        with captured_io(StringIO('hello.txt\n')) as (out, err):
+            filename = hangman.ask_file_name()
+
+        self.assertEqual('hello.txt', filename)
+
+    def test_run(self):
+        hangman.random.randint = lambda a,b: 0
+        with captured_io(StringIO('d\n')) as (out, err):
+            hangman.run_game('tests/test_list.txt')
 
         output = out.getvalue().strip()
-        self.assertEqual("Guess the word: __c\nGuess the missing letter: a_c\nGuess the missing letter: abc", output)
-
-        with captured_io(StringIO('f\na\nb\n')) as (out, err):
-            hangman.run_game_loop('abc',"__c")
-
-        output = out.getvalue().strip()
-        self.assertEqual("""Guess the word: __c
-Guess the missing letter: Wrong! Number of guesses left: 4""", output[:78])
-        self.assertEqual("Guess the missing letter: a_c\nGuess the missing letter: abc", output[-59:])
-
-    def test_step3(self):
-        with captured_io(StringIO('exit\n')) as (out, err):
-            hangman.run_game_loop('abc',"__c")
-
-        output = out.getvalue().strip()
-        self.assertEqual("Guess the word: __c\nGuess the missing letter: Bye!", output)
-
-    def test_step4(self):
-        with captured_io(StringIO('z\nx\ny\nw\nq\n')) as (out, err):
-            hangman.run_game_loop('abc',"__c")
-
-        output = out.getvalue().strip()
-        self.assertEqual("""Guess the word: __c
-Guess the missing letter: Wrong! Number of guesses left: 4""", output[:78])
-        self.assertEqual('Sorry, you are out of guesses. The word was: abc', output[-48:])
-
-    def test_step5_all_left(self):
-        with captured_io(StringIO('')) as (out, err):
-            hangman.draw_figure(4)
-        output = out.getvalue().strip()
-        self.assertEqual("""/----
-|
-|
-|
-|
-_______""", output)
-
-    def test_step5_none_left(self):
-        with captured_io(StringIO('')) as (out, err):
-            hangman.draw_figure(0)
-        output = out.getvalue().strip()
-        self.assertEqual("""/----
-|   0
-|  /|\\
-|   |
-|  / \\
-_______""", output)
+        self.assertEqual("Guess the word: _bc\nGuess the missing letter: The word was: abc\nWrong! Do better next time.", output)
 
 
 if __name__ == '__main__':
